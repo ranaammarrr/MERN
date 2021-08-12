@@ -1,30 +1,33 @@
+const dotenv = require("dotenv");
 const mongoose = require('mongoose');
 const express = require ('express');
 const app = express();
 
-const DB = 'mongodb+srv://ranaammarrr:corsairlpx@cluster0.daydk.mongodb.net/mernstack?retryWrites=true&w=majority';
+dotenv.config({ path: './config.env'});
 
-mongoose.connect(DB, {
-    useNewUrlParser: true,
-    useCreateIndex: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false
-}).then(()=>{
-    console.log(`Connection Successful`);
-}).catch((err)=>{
-    console.log(`No Connnection`)
-});
+require('./db/conn');
+const User = require('./model/userSchema');
+
+app.use(express.json());
+
+
+app.use(require('./router/auth')); //to link router files.
+
+
+const PORT= process.env.PORT;
+
+
 
 // middleware
 const middleware = (req, res, next)=>{
-    console.log(`Hello Middleware`);
+    console.log(` Middleware`);
     next();
 
 }
 
 app.get('/', (req, res) => {
     res.send(`Hello Home`);
-})
+});
 
 
 app.get('/contact', (req, res) => {
@@ -47,6 +50,6 @@ app.get('/signup', (req, res) => {
     res.send(`Hello Registeration`);
 })
 
-app.listen(4000, () =>{
-    console.log(`server is running`);
+app.listen(PORT, () =>{
+    console.log(`server is running at ${PORT}`);
 })
